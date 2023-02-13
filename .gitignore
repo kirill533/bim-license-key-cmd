@@ -1,0 +1,7 @@
+vendor
+.idea
+/tmp/
+.vscode
+/phar-composer*.phar
+/tmp-build/
+/license-key.phar

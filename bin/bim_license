@@ -1,0 +1,72 @@
+#!/usr/bin/env php
+<?php
+/**
+ * BIM CMD Line Tool for license key validation.
+ *
+ * @copyright Copyright (c) Kyrylo Kostiukov 2023 - All Rights Reserved
+ * 
+ * @license MIT
+ * @project cmd-license-key-cmd
+ * 
+ */
+
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+$cmd = new Commando\Command();
+
+$cmd->useDefaultHelp(false);
+
+$cmd->option('h')->aka('help')->default('false')->describedAs('Show the help page for this command.');
+
+$cmd->trapErrors(true);
+
+$cmd->option()->describedAs('The command to execute');
+
+$cmd->option('offline-key')->default(null)->describedAs('Path to offline license key.');
+$cmd->option('online-key')->default(null)->describedAs('Content of online key.');
+
+try {
+    $commandName = preg_grep('/^\w+\-\w+/', $argv);
+    $commandName = array_pop($commandName);
+
+    $help = preg_grep('/^--help$/', $argv);
+    $help = array_pop($help);
+
+    if (isset($commandName)) {
+        switch ($commandName) {
+            case \CmdLicenseKey\Command\KeyInfo::COMMAND_NAME:
+                if (isset($help) && $help === '--help') {
+                    $command = new \CmdLicenseKey\Command\KeyInfo();
+                    $command->help($help);
+                }
+                break;
+            case \CmdLicenseKey\Command\VerifyKey::COMMAND_NAME:
+                if (isset($help) && $help === '--help') {
+                    $command = new \CmdLicenseKey\Command\VerifyKey();
+                    $command->help($help);
+                }
+
+                $cmd->option('domain')->default(null)->describedAs('Domain name.');
+                $cmd->option('platform')->default(null)->describedAs('Platform of license.');
+                $cmd->option('software')->default(null)->describedAs('Software name.');
+                $cmd->option('software-version')->default(null)->describedAs('Software version.');
+
+                break;
+        }
+    }
+
+    $command = $cmd[0];
+
+    if ($cmd['help'] !== 'false') {
+        $shell = \CmdLicenseKey\Shell::execution($command);
+        echo $shell->help($cmd);
+
+        $cmd->printHelp();
+        exit;
+    }
+
+    $shell = \CmdLicenseKey\Shell::execution($command);
+    echo $shell->run($cmd);
+} catch (\Exception $e) {
+    $cmd->error($e);
+}

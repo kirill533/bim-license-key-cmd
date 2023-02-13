@@ -1,0 +1,25 @@
+{
+  "name": "bim/license-key-cmd",
+  "description": "Library for validation license key through command line interface (cmd).",
+  "version": "1.0.0",
+  "license": [
+    "MIT"
+  ],
+  "authors": [
+    {
+      "name": "Kyrylo Kostiukov",
+      "homepage": "https://www.bimprojec.net/"
+    }
+  ],
+  "require": {
+    "php": ">=8.0",
+    "nategood/commando": "*",
+    "wp-cli/php-cli-tools": "0.11.9"
+  },
+  "autoload": {
+    "psr-4": {
+      "CmdLicenseKey\\": "src/"
+    }
+  },
+  "bin": ["bin/bim_license"]
+}
