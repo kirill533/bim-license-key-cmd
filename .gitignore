@@ -5,3 +5,4 @@ vendor
 /phar-composer*.phar
 /tmp-build/
 /license-key.phar
+/composer.lock

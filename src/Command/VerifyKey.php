@@ -11,7 +11,14 @@ namespace CmdLicenseKey\Command;
 
 
 use CmdLicenseKey\CommandInterface;
-use CmdLicenseKey\Key;
+use LicenseKey\Exception\LicenseDomainException;
+use LicenseKey\Exception\LicenseExpiredException;
+use LicenseKey\Exception\LicenseKeyInvalidException;
+use LicenseKey\Exception\LicenseKeyMalformedException;
+use LicenseKey\Exception\LicenseKeyVersionInvalidException;
+use LicenseKey\Exception\LicenseKeyWarningException;
+use LicenseKey\Exception\MissingComponentException;
+use LicenseKey\LicenseKey;
 
 class VerifyKey implements CommandInterface
 {
@@ -21,13 +28,13 @@ class VerifyKey implements CommandInterface
     /**
      * @param \Commando\Command $cmd
      * @return string
-     * @throws \CmdLicenseKey\Exception\LicenseDomainException
-     * @throws \CmdLicenseKey\Exception\LicenseExpiredException
-     * @throws \CmdLicenseKey\Exception\LicenseKeyInvalidException
-     * @throws \CmdLicenseKey\Exception\LicenseKeyMalformedException
-     * @throws \CmdLicenseKey\Exception\LicenseKeyVersionInvalidException
-     * @throws \CmdLicenseKey\Exception\LicenseKeyWarningException
-     * @throws \CmdLicenseKey\Exception\MissingComponentException
+     * @throws LicenseDomainException
+     * @throws LicenseExpiredException
+     * @throws LicenseKeyInvalidException
+     * @throws LicenseKeyMalformedException
+     * @throws LicenseKeyVersionInvalidException
+     * @throws LicenseKeyWarningException
+     * @throws MissingComponentException
      */
     public function run($cmd)
     {
@@ -80,9 +87,8 @@ class VerifyKey implements CommandInterface
             throw new \Exception("Option --software-version should not contain empty string.");
         }
 
-        $key = new Key($software, $licenseText);
-
-        $key->validate($domain, $platform, $software_version);
+        $licenseKey = new LicenseKey();
+        $licenseKey->verifyKey($licenseText, $domain, $platform, $software, $software_version);
 
         return "License key is valid.\n";
     }

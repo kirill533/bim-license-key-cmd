@@ -10,7 +10,10 @@
 namespace CmdLicenseKey\Command;
 
 use CmdLicenseKey\CommandInterface;
-use CmdLicenseKey\Key;
+use Commando\Command;
+use LicenseKey\Exception\LicenseKeyMalformedException;
+use LicenseKey\Exception\LicenseKeyVersionInvalidException;
+use LicenseKey\LicenseKey;
 
 class KeyInfo implements CommandInterface
 {
@@ -18,10 +21,10 @@ class KeyInfo implements CommandInterface
     const COMMAND_DESCRIPTION = 'Describes information about license.';
 
     /**
-     * @param \Commando\Command $cmd
+     * @param Command $cmd
      * @return mixed|void
-     * @throws \CmdLicenseKey\Exception\LicenseKeyMalformedException
-     * @throws \CmdLicenseKey\Exception\LicenseKeyVersionInvalidException
+     * @throws LicenseKeyMalformedException
+     * @throws LicenseKeyVersionInvalidException
      */
     public function run($cmd)
     {
@@ -53,21 +56,15 @@ class KeyInfo implements CommandInterface
             $licenseText = $onlineKey;
         }
 
-        $key = new Key(null, $licenseText);
+        $licenseKey = new LicenseKey();
+        $keyData = $licenseKey->keyInfo($licenseText);
 
-        $keyData = $key->dumpKeyInfo();
-
-        $platform = $keyData['data'][0];
-
-        $modules = $keyData['data'][2];
-
-        // Get last module from modules array for getting expiry date
-        $lastModule = array_pop($modules);
-
-        $expiryDate = date("d-m-Y", strtotime(array_pop($lastModule)));
+        $platform = $keyData['platform'];
+        $expiry = $keyData['expiry'];
+        $modules = $keyData['modules'];
 
         echo "\n";
-        echo "\033[0m License for platform " . strtoupper($platform) . ". Valid until $expiryDate. \n";
+        echo "\033[0m License for platform " . strtoupper($platform) . ". Valid until $expiry. \n";
         echo "\033[0m Software packages list: \n";
 
         foreach ($modules as $module) {
@@ -79,7 +76,7 @@ class KeyInfo implements CommandInterface
 
     /**
      * @param $cmd
-     * @return \Commando\Command|void
+     * @return Command|void
      */
     public function help($cmd)
     {

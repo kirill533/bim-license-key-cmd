@@ -14,12 +14,25 @@
   "require": {
     "php": ">=8.0",
     "nategood/commando": "*",
-    "wp-cli/php-cli-tools": "0.11.9"
+    "wp-cli/php-cli-tools": "0.11.9",
+    "wikimedia/composer-merge-plugin": "2.0.*",
+    "bim/license-key": "dev-main"
   },
   "autoload": {
     "psr-4": {
       "CmdLicenseKey\\": "src/"
     }
   },
-  "bin": ["bin/bim_license"]
+  "bin": ["bin/bim_license"],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/kirill533/bim-license-key"
+    }
+  ],
+  "config": {
+    "allow-plugins": {
+      "wikimedia/composer-merge-plugin": true
+    }
+  }
 }
