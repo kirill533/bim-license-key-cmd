@@ -40,6 +40,7 @@ class VerifyKey implements CommandInterface
     {
         $offlineKeyPath = $cmd['offline-key'];
         $onlineKey = $cmd['online-key'];
+        $onlineServerUrl = $cmd['online-key-server-url'];
 
         if ($offlineKeyPath === null && $onlineKey === null) {
             throw new \Exception(sprintf(
@@ -63,7 +64,29 @@ class VerifyKey implements CommandInterface
                 throw new \Exception("Option --online-key should not contain empty string.");
             }
 
-            $licenseText = $onlineKey;
+            if ($onlineServerUrl === '') {
+                throw new \Exception("Option --online-key-server-url should not contain empty string.");
+            }
+
+            if ($onlineServerUrl === null) {
+                throw new \Exception("Please, specify --online-key-server-url parameter.");
+            }
+
+            $urlOnlineKeys = $onlineServerUrl . '/online-license-keys/';
+
+            $headers = get_headers($urlOnlineKeys);
+            if (!strpos($headers[0], '200')) {
+                throw new \Exception("The path of --online-key-server-url not found.");
+            }
+
+            $url = $onlineServerUrl . '/online-license-keys/' . $onlineKey . '.lic';
+            $headers = get_headers($url);
+            if (!strpos($headers[0], '200')) {
+                throw new \Exception("The key {$onlineKey} not found.");
+            }
+
+            $remoteLicenseKey = file_get_contents($url);
+            $licenseText = $remoteLicenseKey;
         }
 
         $domain = $cmd['domain'];
@@ -101,7 +124,7 @@ class VerifyKey implements CommandInterface
     {
         if ($cmd === '--help') {
             $description = "\n";
-            $description .= "\033[0;33mUsage\033[0m: ./bin/bim_license " . self::COMMAND_NAME . " [--offline-key ''|--online-key ''] --domain '' --platform '' --software '' --software-version ''";
+            $description .= "\033[0;33mUsage\033[0m: ./bin/bim_license " . self::COMMAND_NAME . " [--offline-key ''|--online-key ''  --online-key-server-url ''] --domain '' --platform '' --software '' --software-version ''";
             $description .= "\n";
             $description .= "\033[0;33mHelp\033[0m: " . self::COMMAND_DESCRIPTION . "\n";
             $description .= "\n";

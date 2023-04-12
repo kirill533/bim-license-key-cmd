@@ -39,6 +39,9 @@ try {
                     $command = new \CmdLicenseKey\Command\KeyInfo();
                     $command->help($help);
                 }
+
+                $cmd->option('online-key-server-url')->default(null)->describedAs('Server url with online licenses.');
+
                 break;
             case \CmdLicenseKey\Command\VerifyKey::COMMAND_NAME:
                 if (isset($help) && $help === '--help') {
@@ -50,6 +53,7 @@ try {
                 $cmd->option('platform')->default(null)->describedAs('Platform of license.');
                 $cmd->option('software')->default(null)->describedAs('Software name.');
                 $cmd->option('software-version')->default(null)->describedAs('Software version.');
+                $cmd->option('online-key-server-url')->default(null)->describedAs('Server url with online licenses.');
 
                 break;
         }
