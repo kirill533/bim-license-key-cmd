@@ -62,12 +62,13 @@ class KeyInfo implements CommandInterface
                 throw new \Exception("Please, specify --online-key-server-url parameter.");
             }
 
-            $urlOnlineKeys = $onlineServerUrl . '/online-license-keys/';
-
-            $headers = get_headers($urlOnlineKeys);
-            if (!strpos($headers[0], '200')) {
-                throw new \Exception("The path of --online-key-server-url not found.");
-            }
+            // Disabled since the tested URL should not respond anyways.
+//            $urlOnlineKeys = $onlineServerUrl . '/online-license-keys/';
+//
+//            $headers = get_headers($urlOnlineKeys);
+//            if (!strpos($headers[0], '200')) {
+//                throw new \Exception("The online key server does not respond to $urlOnlineKeys request.");
+//            }
 
             $url = $onlineServerUrl . '/online-license-keys/' . $onlineKey . '.lic';
             $headers = get_headers($url);
