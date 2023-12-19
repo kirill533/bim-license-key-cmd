@@ -16,6 +16,7 @@ $cmd = new Commando\Command();
 
 $cmd->useDefaultHelp(false);
 
+
 $cmd->option('h')->aka('help')->default('false')->describedAs('Show the help page for this command.');
 
 $cmd->trapErrors(true);
@@ -26,8 +27,8 @@ $cmd->option('offline-key')->default(null)->describedAs('Path to offline license
 $cmd->option('online-key')->default(null)->describedAs('Content of online key.');
 
 try {
-    $commandName = preg_grep('/^\w+\-\w+/', $argv);
-    $commandName = array_pop($commandName);
+
+    $commandName = $argv[1] ?? null;
 
     $help = preg_grep('/^--help$/', $argv);
     $help = array_pop($help);
@@ -59,7 +60,7 @@ try {
         }
     }
 
-    $command = $cmd[0];
+    $command = $cmd->offsetGet(0);
 
     if ($cmd['help'] !== 'false') {
         $shell = \CmdLicenseKey\Shell::execution($command);
@@ -70,6 +71,7 @@ try {
     }
 
     $shell = \CmdLicenseKey\Shell::execution($command);
+
     echo $shell->run($cmd);
 } catch (\Exception $e) {
     $cmd->error($e);
