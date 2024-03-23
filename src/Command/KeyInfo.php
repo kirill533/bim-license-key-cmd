@@ -88,7 +88,7 @@ class KeyInfo implements CommandInterface
         $modules = $keyData['modules'];
 
         echo "\n";
-        echo "\033[0m License for platform " . strtoupper($platform) . ". Valid until $expiry. \n";
+        echo "\033[0m License for platform: '" . $platform . "'. Valid until $expiry. \n";
         echo "\033[0m Software packages list: \n";
 
         foreach ($modules as $module) {
